@@ -1,0 +1,6 @@
+{
+	"ignore": ["build", "node_modules"],
+	"exec": "bun run build && cp -r ./build ../backend/public",
+	"watch": ["src/", "public", "vite.config.ts", "index.html"],
+	"ext": "ts,tsx,js,json,css,scss,html,png,jpg,jpeg,svg,webp"
+}

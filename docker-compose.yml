@@ -1,0 +1,14 @@
+services:
+  medivu-auth:
+    build: .
+    container_name: medivu-auth
+    environment:
+      - PG_DB_URL=${PG_DB_URL}
+      - JWT_EXP_SEC=${JWT_EXP_SEC}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - REDIS_ADDR=${REDIS_ADDR}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    expose:
+      - "3000"
+    restart: unless-stopped

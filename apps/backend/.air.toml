@@ -1,0 +1,20 @@
+# air 기본 설정
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ."
+bin = "tmp/main"
+# nodemon 의 watch + ext에 대응
+include_ext = ["go", "env", "js", "css", "scss", "html", "png", "jpg", "jpeg", "svg", "webp"]
+# nodemon 의 ignore에 대응
+exclude_dir = ["build", "node_modules", ".turbo", "tmp"]
+
+[log]
+time = true
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"

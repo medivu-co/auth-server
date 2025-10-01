@@ -1,0 +1,26 @@
+{
+	"name": "@medivu-auth/frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"build": "tsc -b && vite build",
+		"dev": "nodemon"
+	},
+	"dependencies": {
+		"@tailwindcss/vite": "^4.1.13",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"react-router-dom": "^7.9.3",
+		"tailwindcss": "^4.1.13"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.4",
+		"@types/react": "^19.1.13",
+		"@types/react-dom": "^19.1.9",
+		"@vitejs/plugin-react-swc": "^4.1.0",
+		"nodemon": "^3.1.10",
+		"typescript": "~5.8.3",
+		"vite": "^7.1.7"
+	}
+}

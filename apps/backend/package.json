@@ -1,0 +1,16 @@
+{
+	"name": "@medivu-auth/backend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"build": "go build -o build/main .",
+		"dev": "dotenvx run -- go run github.com/air-verse/air@latest"
+	},
+	"dependencies": {
+		"@medivu-auth/frontend": "workspace:*"
+	},
+	"devDependencies": {
+		"@dotenvx/dotenvx": "^1.51.0"
+	}
+}

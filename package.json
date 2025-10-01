@@ -1,0 +1,12 @@
+{
+  "workspaces": [
+    "apps/*"
+  ],
+  "name": "medivu-auth",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  },
+  "packageManager": "bun@1.2.23"
+}

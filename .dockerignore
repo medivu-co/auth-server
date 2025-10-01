@@ -1,0 +1,19 @@
+
+# Editor directories and files
+.vscode/*
+.DS_Store
+
+**/node_modules
+**/build
+**/.turbo
+**/.env*
+**/README.md
+**/.gitignore
+
+# Frontend
+apps/frontend/biome.json
+apps/frontend/nodemon.json
+
+# Backend
+apps/backend/tmp
+apps/backend/package.json
