@@ -14,15 +14,14 @@ COPY apps/backend/go.sum ./
 RUN go mod download
 
 COPY apps/backend/ ./
-RUN go build -o main .
-
+RUN go build -o api ./cmd/api
 
 # Final image
 FROM alpine:latest
 WORKDIR /app
 
 # Copy backend
-COPY --from=backend-builder /app/backend/main ./main
+COPY --from=backend-builder /app/backend/api ./main
 # Copy frontend build
 COPY --from=frontend-builder /app/frontend/build/ ./public/
 

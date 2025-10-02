@@ -3,12 +3,12 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o ./tmp/main ."
-bin = "tmp/main"
+cmd = "go build -o ./tmp/api ./cmd/api"
+bin = "tmp/api"
 # nodemon 의 watch + ext에 대응
 include_ext = ["go", "env", "js", "css", "scss", "html", "png", "jpg", "jpeg", "svg", "webp"]
 # nodemon 의 ignore에 대응
-exclude_dir = ["build", "node_modules", ".turbo", "tmp"]
+exclude_dir = ["build", "node_modules", ".turbo", "tmp", "sql"]
 
 [log]
 time = true
