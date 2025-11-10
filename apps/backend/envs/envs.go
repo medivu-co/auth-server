@@ -3,12 +3,17 @@ package envs
 var envs serverEnvs
 
 type serverEnvs struct {
+	Environment      string `env:"ENVIRONMENT"`
 	PostgresDBURL    string `env:"PG_DB_URL"`
 	JWTSecretKey     string `env:"JWT_SECRET_KEY"`
 	JWTExpirationSec int    `env:"JWT_EXP_SEC"`
 	RedisAddr        string `env:"REDIS_ADDR"`
 	RedisPassword    string `env:"REDIS_PASSWORD"`
 	RedisDB          int    `env:"REDIS_DB"`
+}
+
+func IsProduction() bool {
+	return envs.Environment != "development"
 }
 
 func PostgresDBURL() string {

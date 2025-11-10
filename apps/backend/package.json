@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "go build -o build/main .",
-		"dev": "dotenvx run -- go run github.com/air-verse/air@latest"
+		"dev": "dotenvx run -- go run github.com/air-verse/air@latest",
+		"sqlc:generate": "go run github.com/sqlc-dev/sqlc/cmd/sqlc@latest generate"
 	},
 	"dependencies": {
 		"@medivu-auth/frontend": "workspace:*"

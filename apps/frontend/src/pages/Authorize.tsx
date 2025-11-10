@@ -20,6 +20,16 @@ export default function AuthorizePage() {
     !codeChallenge ||
     !codeChallengeMethod
   ) {
+    // log which parameters are missing
+    const missingParams = [];
+    if (!clientID) missingParams.push("client_id");
+    if (!rawRedirectURI) missingParams.push("redirect_uri");
+    if (!state) missingParams.push("state");
+    if (!codeChallenge) missingParams.push("code_challenge");
+    if (!codeChallengeMethod) missingParams.push("code_challenge_method");
+    console.error(
+      `Missing required query parameters: ${missingParams.join(", ")}`
+    );
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
@@ -82,6 +92,7 @@ export default function AuthorizePage() {
                 <input type="hidden" name="client_id" value={clientID} />
                 <input type="hidden" name="redirect_uri" value={redirectURI} />
                 <input type="hidden" name="state" value={state} />
+                <input type="hidden" name="scope" value="userinfo:write" />
                 <input
                   type="hidden"
                   name="code_challenge"

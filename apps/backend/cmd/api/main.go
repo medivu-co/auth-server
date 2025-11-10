@@ -1,47 +1,80 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"errors"
 
+	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"medivu.co/auth/envs"
+	"medivu.co/auth/internal/routers"
+	"medivu.co/auth/logger"
+	"medivu.co/auth/postgres"
+	"medivu.co/auth/rdb"
+	"medivu.co/auth/validator"
 )
 
 func main() {
+	// Load environment variables
 	envs.Load()
 
-	app := fiber.New()
+	// Initialize logger
+	logger.Init()
+	defer logger.Sync()
+
+	// Connect to Redis
+	rdb.Connect()
+	defer rdb.Close()
+
+	// Connect to Postgres
+	postgres.Connect()
+	defer postgres.Close()
+
+	// Initialize validator
+	validator.Init()
+
+	// Initialize Fiber app
+	app := fiber.New(fiber.Config{
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			// Status code defaults to 500
+			code := fiber.StatusInternalServerError
+
+			// Retrieve the custom status code if it's a *fiber.Error
+			var e *fiber.Error
+			if errors.As(err, &e) {
+				code = e.Code
+			}
+			// log the error message
+			if code >= 500 {
+				logger.Get().Error("Internal Server Error: " + err.Error())
+				return c.Status(code).JSON(fiber.Map{
+					"error": "internal_server_error",
+				})
+			}
+			return c.Status(code).JSON(fiber.Map{
+				"error": e.Message,
+			})
+		},
+	})
+	// CORS Middleware
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "https://medivu.co, https://*.medivu.co, http://localhost:5173",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowCredentials: true,
+	}))
+
+	// Middleware(Logger)
+	app.Use(fiberzap.New(fiberzap.Config{
+		Logger: logger.Get(),
+	}))
 
 	// API route
-	app.Post("/api/authorize", func(c *fiber.Ctx) error {
-		// parse form data
-		type Request struct {
-			Email               string `form:"email"`
-			Password            string `form:"password"`
-			ResponseType        string `form:"response_type"`
-			ClientID            string `form:"client_id"`
-			RedirectURI         string `form:"redirect_uri"`
-			State               string `form:"state"`
-			Scope               string `form:"scope"`
-			CodeChallenge       string `form:"code_challenge"`
-			CodeChallengeMethod string `form:"code_challenge_method"`
-		}
-		var req Request
-		if err := c.BodyParser(&req); err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "invalid_request",
-			})
-		}
-		fmt.Println(req)
-		return c.Redirect(fmt.Sprintf("%s?code=%s&state=%s", req.RedirectURI, "codeasdf", req.State))
-
-	})
+	routers.RegisterAPIRouters(app)
 
 	// SPA static files
 	app.Static("/", "./public")
 	app.Static("*", "./public/index.html")
 
 
-	log.Fatal(app.Listen(":3000"))
+	logger.Get().Fatal(app.Listen(":3000").Error())
 }
