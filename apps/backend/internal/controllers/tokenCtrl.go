@@ -67,3 +67,32 @@ func (ctrl *TokenCtrl) ExchangeCodeToToken(c *fiber.Ctx) error {
 		"expires_at":   accessToken.ExpireAt.Unix(),
 	})
 }
+
+func (ctrl *TokenCtrl) RefreshToken(c *fiber.Ctx) error {
+	// get refresh token from cookie
+	refreshTokenCookie := c.Cookies("refresh_token")
+	if refreshTokenCookie == "" {
+		return fiber.NewError(401, "missing refresh token")
+	}
+	accessToken, refreshToken, err := ctrl.tokenSvc.RefreshTokens(refreshTokenCookie)
+	if err != nil {
+		if errors.Cause(err) == services.ErrUserNotFound {
+			return fiber.NewError(401, "invalid refresh token")
+		}
+		return fiber.NewError(500, err.Error())
+	}
+	// set new refresh token in cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken.Token,
+		HTTPOnly: true,
+		Secure:  true,
+		SameSite: "strict",
+	})
+	return c.JSON(fiber.Map{
+		"access_token": accessToken.Token,
+		"token_type":   "bearer",
+		"expires_in":   envs.JWTExpirationSec(),
+		"expires_at":   accessToken.ExpireAt.Unix(),
+	})
+}

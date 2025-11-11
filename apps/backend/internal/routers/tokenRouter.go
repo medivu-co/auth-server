@@ -19,4 +19,7 @@ func (r *tokenRouter) Register(rootRouter fiber.Router) {
 	tokenGroup.Post("/", func(c *fiber.Ctx) error {
 		return tokenController.ExchangeCodeToToken(c)
 	})
+	tokenGroup.Post("/refresh", func(c *fiber.Ctx) error {
+		return tokenController.RefreshToken(c)
+	})
 }
