@@ -58,7 +58,7 @@ func main() {
 	})
 	// CORS Middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://medivu.co, https://*.medivu.co, http://localhost:5173",
+		AllowOrigins: "https://medivu.co, https://*.medivu.co, https://localhost:5173",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
