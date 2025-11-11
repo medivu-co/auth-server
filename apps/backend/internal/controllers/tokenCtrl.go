@@ -44,13 +44,13 @@ func (ctrl *TokenCtrl) ExchangeCodeToToken(c *fiber.Ctx) error {
 			fmt.Println(err)
 			return fiber.NewError(401, "invalid grant code")
 		}
-		return fiber.NewError(500, "internal server error")
+		return fiber.NewError(500, err.Error())
 	}
 	
 	accessToken, refreshToken, err := ctrl.tokenSvc.GenerateTokens(userID, c.Get("User-Agent"))
 	// TODO: Handle various errors from token generation
 	if err != nil {
-		return fiber.NewError(500, "failed to generate tokens")
+		return fiber.NewError(500, err.Error())
 	}
 
 	c.Cookie(&fiber.Cookie{

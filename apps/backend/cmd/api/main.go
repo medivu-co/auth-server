@@ -38,21 +38,23 @@ func main() {
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
+			message := "Unknown Error"
 
 			// Retrieve the custom status code if it's a *fiber.Error
 			var e *fiber.Error
 			if errors.As(err, &e) {
 				code = e.Code
+				message = e.Message
 			}
 			// log the error message
 			if code >= 500 {
-				logger.Get().Error("Internal Server Error: " + err.Error())
+				logger.Get().Error("Internal Server Error: " + message)
 				return c.Status(code).JSON(fiber.Map{
 					"error": "internal_server_error",
 				})
 			}
 			return c.Status(code).JSON(fiber.Map{
-				"error": e.Message,
+				"error": message,
 			})
 		},
 	})
