@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9/maintnotifications"
 	"medivu.co/auth/envs"
 	"medivu.co/auth/logger"
 )
@@ -15,6 +16,9 @@ func Connect() error {
 		Addr:     envs.RedisAddr(),
 		Password: envs.RedisPassword(),
 		DB:       envs.RedisDB(),
+		MaintNotificationsConfig: &maintnotifications.Config{
+			Mode: maintnotifications.ModeDisabled,
+		},
 	})
 	// Try to ping Redis to check connection
 	if err := Client.Ping(context.Background()).Err(); err != nil {
