@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"regexp"
+	"slices"
 
 	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
@@ -60,7 +62,19 @@ func main() {
 	})
 	// CORS Middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://medivu.co, https://*.medivu.co, https://localhost:5173",
+		AllowOriginsFunc: func(origin string) bool {
+			allowedOrigins := []string{
+				"https://medivu.co",
+				"https://localhost:5173",
+			}
+			if slices.Contains(allowedOrigins, origin) {
+				return true
+			} else if regexp.MustCompile(`^https:\/\/([a-zA-Z0-9-]+\.)?medivu\.co$`).MatchString(origin) {
+				return true
+			}
+			return false
+		},
+		// AllowOrigins: "https://medivu.co, https://*.medivu.co, https://localhost:5173",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
