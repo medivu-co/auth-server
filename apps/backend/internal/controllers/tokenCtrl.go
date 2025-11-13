@@ -96,3 +96,18 @@ func (ctrl *TokenCtrl) RefreshToken(c *fiber.Ctx) error {
 		"expires_at":   accessToken.ExpireAt.Unix(),
 	})
 }
+
+func (ctrl *TokenCtrl) RevokeToken(c *fiber.Ctx) error {
+	// get refresh token from cookie
+	refreshTokenCookie := c.Cookies("refresh_token")
+	if refreshTokenCookie == "" {
+		return fiber.NewError(401, "missing refresh token")
+	}
+	err := ctrl.tokenSvc.RevokeRefreshToken(refreshTokenCookie)
+	if err != nil {
+		return fiber.NewError(500, err.Error())
+	}
+	// clear refresh token cookie
+	c.ClearCookie("refresh_token")
+	return c.SendStatus(200)
+}

@@ -24,6 +24,7 @@ var (
 type TokenSvc interface {
 	GenerateTokens(userID int32, userAgent string) (accessToken *AccessToken, refreshToken *RefreshToken, err error)
 	RefreshTokens(refreshTokenString string) (newAccessToken *AccessToken, newRefreshToken *RefreshToken, err error)
+	RevokeRefreshToken(refreshTokenString string) error
 }
 
 type tokenSvc struct {
@@ -114,6 +115,14 @@ func (s *tokenSvc) RefreshTokens(refreshTokenString string) (newAccessToken *Acc
 		return nil, nil, errors.Wrap(err, "failed to save new refresh token")
 	}
 	return newAccessToken, newRefreshToken, nil
+}
+
+func (s *tokenSvc) RevokeRefreshToken(refreshTokenString string) error {
+	err := s.refreshTokenRepo.DeleteToken(refreshTokenString)
+	if err != nil {
+		return errors.Wrap(err, "failed to delete refresh token")
+	}
+	return nil
 }
 
 type AccessToken struct {

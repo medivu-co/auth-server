@@ -22,4 +22,7 @@ func (r *tokenRouter) Register(rootRouter fiber.Router) {
 	tokenGroup.Post("/refresh", func(c *fiber.Ctx) error {
 		return tokenController.RefreshToken(c)
 	})
+	tokenGroup.Post("/revoke", func(c *fiber.Ctx) error {
+		return tokenController.RevokeToken(c)
+	})
 }
