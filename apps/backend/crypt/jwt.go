@@ -1,6 +1,9 @@
 package crypt
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"encoding/hex"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -8,32 +11,32 @@ import (
 )
 
 func NewJWTToken(claims jwt.MapClaims, ttl time.Duration) (signedToken string, expiresAt time.Time, err error) {
-	secret := []byte(envs.JWTSecretKey())
+	privateKeyString := envs.JWTP256PrivateKeyHex()
 
-	expiresAt = time.Now().Add(ttl)
+	privateKeyBytes, err := hex.DecodeString(privateKeyString)
+	if err != nil {
+		return
+	}
+
+	now := time.Now()
+	expiresAt = now.Add(ttl)
+	token := jwt.New(jwt.SigningMethodES256)
+
+	// Set standard headers and claims
+	token.Header["kid"] = 1
+	
+	claims["iat"] = now.Unix()
 	claims["exp"] = expiresAt.Unix()
+	token.Claims = claims
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err = token.SignedString(secret)
+	privateKey, err := ecdsa.ParseRawPrivateKey(elliptic.P256(),privateKeyBytes)
+	if err != nil {
+		return
+	}
+	signedToken, err = token.SignedString(privateKey)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func ParseJWTToken(signedToken string) (claims jwt.MapClaims, err error) {
-	secret := []byte(envs.JWTSecretKey())
-	
-	token, err := jwt.Parse(signedToken, func(token *jwt.Token) (any, error) {
-		return secret, nil
-	})
-	if err != nil {
-		return
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		err = jwt.ErrTokenInvalidClaims
-		return
-	}
-	return claims, nil
-}

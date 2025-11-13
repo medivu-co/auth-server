@@ -15,7 +15,7 @@ type Router interface {
 func RegisterAPIRouters(app *fiber.App) {
 	apiGroup := app.Group("/api")
 
-	routers := []Router{
+	apiRouters := []Router{
 		&authorizeRouter{
 			prefix:     "/authorize",
 			authorizeSvc: services.NewGrantCodeSvc(
@@ -40,7 +40,12 @@ func RegisterAPIRouters(app *fiber.App) {
 		},
 	}
 
-	for _, router := range routers {
+	for _, router := range apiRouters {
 		router.Register(apiGroup)
 	}
+
+	wellKnownRouter := &wellKnownRouter{
+		prefix: "/.well-known",
+	}
+	wellKnownRouter.Register(app)
 }
