@@ -19,6 +19,17 @@ func NewWellKnownCtrl() *WellKnownCtrl {
 	}
 }
 
+func (ctrl *WellKnownCtrl) GetOpenIDConfig(c *fiber.Ctx) error {
+	publicHostURL := envs.PublicHostURL()
+	return c.JSON(fiber.Map{
+		"issuer":                                publicHostURL,
+		"authorization_endpoint":                publicHostURL + "/authorize",
+		"token_endpoint":                        publicHostURL + "/token",
+		"userinfo_endpoint":                     publicHostURL + "/userinfo",
+		"jwks_uri":                             publicHostURL + "/.well-known/jwks.json",
+		"id_token_signing_alg_values_supported": []string{"ES256"},
+	})
+}
 
 func (ctrl *WellKnownCtrl) GetJWKS(c *fiber.Ctx) error {
 

@@ -11,6 +11,7 @@ type serverEnvs struct {
 	RedisAddr        string `env:"REDIS_ADDR"`
 	RedisPassword    string `env:"REDIS_PASSWORD"`
 	RedisDB          int    `env:"REDIS_DB"`
+	PublicHostURL    string `env:"PUBLIC_HOST_URL"`
 }
 
 func IsProduction() bool {
@@ -43,4 +44,8 @@ func RedisPassword() string {
 
 func RedisDB() int {
 	return envs.RedisDB
+}
+
+func PublicHostURL() string {
+	return envs.PublicHostURL
 }
