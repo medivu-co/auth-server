@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy backend
 COPY --from=backend-builder /app/backend/api ./main
 # Copy frontend build
-COPY --from=frontend-builder /app/frontend/build/ ./public/
+COPY --from=frontend-builder /app/frontend/dist/ ./public/
 
 EXPOSE 3000
 CMD ["./main"]

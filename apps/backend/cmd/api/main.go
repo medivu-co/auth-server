@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"medivu.co/auth/envs"
 	"medivu.co/auth/internal/routers"
 	"medivu.co/auth/logger"
@@ -74,7 +75,6 @@ func main() {
 			}
 			return false
 		},
-		// AllowOrigins: "https://medivu.co, https://*.medivu.co, https://localhost:5173",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
@@ -88,8 +88,17 @@ func main() {
 	routers.RegisterAPIRouters(app)
 
 	// SPA static files
-	app.Static("/", "./public")
-	app.Static("*", "./public/index.html")
+	if envs.IsProduction(){
+		app.Static("/", "./public")
+		app.Static("*", "./public/index.html")
+	} else {
+		// reverse proxy to vite dev server in development
+		app.All("/*", func(c *fiber.Ctx) error {
+			target := "http://localhost:5173" + c.OriginalURL()
+			return proxy.Do(c, target)
+		})
+	}
+	
 
 
 	logger.Get().Fatal(app.Listen(":3000").Error())

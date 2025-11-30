@@ -36,3 +36,4 @@ func (s *userSvc) BasicAuthenticate(email, password string) (*sqlc.User, error) 
 	return user, nil
 }
 
+
