@@ -11,13 +11,9 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 const signUpFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, 'Please enter your name.')
-    .max(25, 'Name must be at most 25 characters.'),
   confirmPassword: z.string().min(1, 'Please confirm your password.'),
   email: z.email('Please enter a valid email address.'),
+  name: z.string().trim().min(1, 'Please enter your name.').max(25, 'Name must be at most 25 characters.'),
   password: z
     .string()
     .regex(/[\x20-\x7E]+/, {
@@ -31,9 +27,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
-      name: '',
       confirmPassword: '',
       email: '',
+      name: '',
       password: '',
     },
     onSubmit: async ({ value }) => {
@@ -146,6 +142,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
                             placeholder='Password'
+                            type='password'
                             value={field.state.value}
                           />
                           {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -179,6 +176,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
                             placeholder='Password Confirmation'
+                            type='password'
                             value={field.state.value}
                           />
                           {isInvalid && <FieldError errors={field.state.meta.errors} />}
