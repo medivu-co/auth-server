@@ -11,6 +11,11 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 const signUpFormSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Please enter your name.')
+    .max(25, 'Name must be at most 25 characters.'),
   confirmPassword: z.string().min(1, 'Please confirm your password.'),
   email: z.email('Please enter a valid email address.'),
   password: z
@@ -26,6 +31,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
+      name: '',
       confirmPassword: '',
       email: '',
       password: '',
@@ -78,9 +84,31 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               <div className='flex flex-col items-center gap-2 text-center'>
                 <h1 className='text-2xl font-bold'>Create your MEDIVU account</h1>
                 <p className='text-muted-foreground text-sm text-balance'>
-                  Enter your email below to create your account
+                  Enter your details below to create your account
                 </p>
               </div>
+              <form.Field name='name'>
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                      <Input
+                        aria-invalid={isInvalid}
+                        autoComplete='name'
+                        id={field.name}
+                        maxLength={25}
+                        name={field.name}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder='Jane Doe'
+                        value={field.state.value}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  );
+                }}
+              </form.Field>
               <form.Field name='email'>
                 {(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
